@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Dashboard Jadwal Pelajaran - Tampilkan jadwal berdasarkan Hari, Mapel, Guru, dan Kelas."
+    />
+    <title>Dashboard Jadwal Pelajaran</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar / Filter Panel -->
+      <aside class="sidebar">
+        <div class="brand">
+          <h1>📅 Scheduler</h1>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <label for="filter-hari">Hari</label>
+            <div class="select-wrapper">
+              <select id="filter-hari">
+                <option value="">Semua Hari</option>
+                <!-- Options populated via JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-kelas">Kelas</label>
+            <div class="select-wrapper">
+              <select id="filter-kelas">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-mapel">Mata Pelajaran</label>
+            <div class="select-wrapper">
+              <select id="filter-mapel">
+                <option value="">Semua Mapel</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-guru">Guru</label>
+            <div class="select-wrapper">
+              <select id="filter-guru">
+                <option value="">Semua Guru</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="reset-filters" class="btn-reset">Reset Filter</button>
+        </div>
+
+        <div class="stats-card">
+          <h3>Total Jadwal</h3>
+          <p id="total-count">0</p>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="top-bar">
+          <button id="toggle-sidebar" class="btn-toggle-sidebar">☰</button>
+          <h2>Jadwal Pelajaran</h2>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="search-bar">
+              <input type="text" id="search-input" placeholder="Cari jadwal..." />
+            </div>
+            <button id="toggle-theme" class="btn-toggle-theme" title="Toggle Dark/Light Mode">🌙</button>
+          </div>
+        </header>
+
+        <div id="schedule-grid" class="grid-container">
+          <!-- Cards will be injected here -->
+        </div>
+
+        <div id="empty-state" class="empty-state hidden">
+          <img
+            src="https://cdni.iconscout.com/illustration/premium/thumb/empty-state-2130362-1800926.png"
+            alt="No Data"
+          />
+          <p>Tidak ada jadwal yang sesuai filter.</p>
+        </div>
+      </main>
+    </div>
+
+    <!-- Data & Logic -->
+    <script src="datajadwal.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
