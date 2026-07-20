@@ -4,9 +4,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const html = document.documentElement;
     const THEME_KEY = 'theme-preference';
 
+    // Clear app-specific session/cache storage when browser/tab closes
+    function clearAppStorage() {
+        try {
+            sessionStorage.removeItem(THEME_KEY);
+
+            if (window.caches && window.caches.keys) {
+                caches.keys().then((cacheNames) => {
+                    cacheNames.forEach((cacheName) => caches.delete(cacheName));
+                });
+            }
+        } catch (error) {
+            console.warn('Tidak dapat membersihkan cache secara penuh:', error);
+        }
+    }
+
+    window.addEventListener('beforeunload', clearAppStorage);
+    window.addEventListener('unload', clearAppStorage);
+
     // Initialize theme
     function initTheme() {
-        const savedTheme = localStorage.getItem(THEME_KEY);
+        const savedTheme = sessionStorage.getItem(THEME_KEY);
         let currentTheme = savedTheme;
 
         // If no saved theme, check system preference
@@ -29,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             themeToggleBtn.textContent = '☀️';
             themeToggleBtn.title = 'Switch to Light Mode';
         }
-        localStorage.setItem(THEME_KEY, theme);
+        sessionStorage.setItem(THEME_KEY, theme);
     }
 
     // Toggle theme
