@@ -127,7 +127,7 @@ select:focus {
 }
 
 .stats-card {
-  margin-top: auto;
+  margin-top: 1px;
   background: linear-gradient(
     135deg,
     var(--primary-color),
