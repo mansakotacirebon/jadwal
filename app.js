@@ -165,8 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchesHari && matchesKelas && matchesMapel && matchesGuru;
         });
 
-        // Extract unique values and sort them
-        return [...new Set(filteredData.map(item => item[targetKey]))].sort();
+        const uniqueValues = [...new Set(filteredData.map(item => item[targetKey]))];
+
+        if (targetKey === 'hari') {
+            return uniqueValues.sort((a, b) => b.localeCompare(a, 'id'));
+        }
+
+        return uniqueValues.sort();
     }
 
     // Update all dropdowns options based on current state
