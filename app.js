@@ -256,8 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="info-row">
                         <span>🗓️</span>
                         <span class="info-val">${item.hari}</span>
-                    </div>
-                    <div class="info-row">
+                     <span>  ||</span>
                         <span>⏰</span>
                         <span class="info-val">${item.jam}</span>
                     </div>

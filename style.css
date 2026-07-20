@@ -231,7 +231,7 @@ select:focus {
 .card {
   background-color: var(--bg-card);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
   border: 1px solid var(--border-color);
   transition:
     transform 0.2s,
@@ -241,7 +241,7 @@ select:focus {
   display: flex !important;
   flex-direction: column !important;
   height: auto !important;
-  min-height: 12rem; /* Force minimum height to prevent collapse */
+  min-height: 7rem; /* Force minimum height to prevent collapse */
 }
 
 /* ... keep hover ... */
@@ -290,7 +290,7 @@ select:focus {
 }
 
 .tag {
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem 0.25rem;
   border-radius: 1rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -302,7 +302,7 @@ select:focus {
   background-color: rgba(56, 189, 248, 0.1);
   color: var(--accent-color);
   font-size: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border: 1px solid rgba(56, 189, 248, 0.2);
 }
 
@@ -316,7 +316,7 @@ select:focus {
 .info-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.1rem;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
