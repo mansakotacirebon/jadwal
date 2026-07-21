@@ -227,7 +227,13 @@ select:focus {
   gap: 0.5rem;
   display: grid;
 }
-
+/* Menambahkan ruang khusus di paling bawah grid */
+.grid-container::after {
+  content: "";
+  display: block;
+  grid-column: 1 / -1; /* Memaksa elemen ini membentang dari kolom pertama sampai akhir */
+  height: 100vh;      /* Atur besarnya jarak bawah yang Anda inginkan di sini */
+}
 /* Schedule Card */
 /* Animation Removed to prevent layout lock */
 .card {
