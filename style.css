@@ -218,7 +218,7 @@ select:focus {
 }
 
 .grid-container {
-  flex: 1;
+  flex: none;
   padding: 1rem;
   overflow-y: auto;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
