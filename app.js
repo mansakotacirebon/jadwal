@@ -72,12 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper function to close sidebar
     function closeSidebar() {
         sidebar.classList.remove('active');
+        toggleBtn.classList.remove('hidden');
     }
 
     // Toggle sidebar visibility
     if (toggleBtn && sidebar) {
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
+            toggleBtn.classList.toggle('hidden');
         });
 
         // Close sidebar when clicking outside
