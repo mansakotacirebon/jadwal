@@ -124,6 +124,20 @@
             font-weight: 500;
         }
 
+        .count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            margin-left: 0.5rem;
+            min-width: 1.5rem;
+        }
+
         .select-wrapper {
             position: relative;
         }
@@ -539,38 +553,38 @@
             </div>
             <div class="filters">
                 <div class="filter-group">
-                    <label for="filter-hari">Hari</label>
+                    <label for="filter-hari">Hari <span class="count-badge" id="count-hari">0</span></label>
                     <div class="select-wrapper">
                         <select id="filter-hari">
-                            <option value="">Semua Hari</option>
+                            <option value="">Jumlah Hari</option>
                             <!-- Options populated via JS -->
                         </select>
                     </div>
                 </div>
 
                 <div class="filter-group">
-                    <label for="filter-kelas">Kelas</label>
+                    <label for="filter-kelas">Kelas <span class="count-badge" id="count-kelas">0</span></label>
                     <div class="select-wrapper">
                         <select id="filter-kelas">
-                            <option value="">Semua Kelas</option>
+                            <option value="">Jumlah Kelas</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="filter-group">
-                    <label for="filter-mapel">Mata Pelajaran</label>
+                    <label for="filter-mapel">Mata Pelajaran <span class="count-badge" id="count-mapel">0</span></label>
                     <div class="select-wrapper">
                         <select id="filter-mapel">
-                            <option value="">Semua Mapel</option>
+                            <option value="">Jumlah Mapel</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="filter-group">
-                    <label for="filter-guru">Guru</label>
+                    <label for="filter-guru">Guru <span class="count-badge" id="count-guru">0</span></label>
                     <div class="select-wrapper">
                         <select id="filter-guru">
-                            <option value="">Semua Guru</option>
+                            <option value="">Jumlah Guru</option>
                         </select>
                     </div>
                 </div>
@@ -757,6 +771,12 @@
                     guru: document.getElementById('filter-guru'),
                     search: document.getElementById('search-input')
                 },
+                counts: {
+                    hari: document.getElementById('count-hari'),
+                    kelas: document.getElementById('count-kelas'),
+                    mapel: document.getElementById('count-mapel'),
+                    guru: document.getElementById('count-guru')
+                },
                 resetBtn: document.getElementById('reset-filters')
             };
 
@@ -805,10 +825,10 @@
 
                 // Default placeholder texts
                 const defaultLabels = {
-                    hari: 'Semua Hari',
-                    kelas: 'Semua Kelas',
-                    mapel: 'Semua Mapel',
-                    guru: 'Semua Guru'
+                    hari: 'Jumlah Hari',
+                    kelas: 'Jumlah Kelas',
+                    mapel: 'Jumlah Mapel',
+                    guru: 'Jumlah Guru'
                 };
 
                 keys.forEach(key => {
@@ -846,6 +866,22 @@
                         // applyFilters will be called by the event listener that triggered this update, 
                         // but if we are in a chain reaction, we might need to ensure consistency.
                         // However, applyFilters uses state.filters, so updating state.filters[key] here is correct.
+                    }
+                });
+
+                // Update count badges
+                updateCountBadges();
+            }
+
+            // Update count badges for each filter
+            function updateCountBadges() {
+                const keys = ['hari', 'kelas', 'mapel', 'guru'];
+
+                keys.forEach(key => {
+                    const validValues = getValidOptions(key);
+                    const count = validValues.length;
+                    if (elements.counts[key]) {
+                        elements.counts[key].textContent = count;
                     }
                 });
             }

@@ -1,7 +1,7 @@
 {
   "name": "Jadwal Pelajaran",
   "short_name": "Jadwal",
-  "description": "Dashboard jadwal pelajaran MAN 1 Kota Cirebon",
+  "description": "Jadwal pelajaran MAN 1 Kota Cirebon Semester Ganjil 2026",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
