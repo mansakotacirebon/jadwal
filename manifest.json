@@ -1,0 +1,19 @@
+{
+  "name": "Jadwal Pelajaran",
+  "short_name": "Jadwal",
+  "description": "Dashboard jadwal pelajaran MAN 1 Kota Cirebon",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
