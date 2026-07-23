@@ -752,7 +752,7 @@
                 data: dataJadwal,
                 filters: {
                     hari: '',
-                    kelas: '',
+                    kelas: '10 K',
                     mapel: '',
                     guru: '',
                     search: ''
@@ -786,6 +786,7 @@
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const currentDay = days[new Date().getDay()];
                 state.filters.hari = currentDay;
+                state.filters.kelas = '10 K';
 
                 updateDropdowns(); // Initial population
                 applyFilters(); // Apply initial filter for current day
