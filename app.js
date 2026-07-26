@@ -142,8 +142,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     function init() {
+        // Set hari filter to current day
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const currentDay = days[new Date().getDay()];
+        state.filters.hari = currentDay;
+
         updateDropdowns(); // Initial population
-        renderCards(state.data); // Initial render
+        applyFilters(); // Apply initial filter for current day
         setupEventListeners();
     }
 
