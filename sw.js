@@ -2,6 +2,7 @@ const CACHE_NAME = 'jadwal-pwa-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './datajadwal.csv',
   './logo.svg',
   './manifest.json'
 ];
