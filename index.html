@@ -344,6 +344,43 @@
         background-color: var(--accent-color);
       }
 
+      /* Warna card berdasarkan jam */
+      .card-jam-01 { --jam-color: #FF6B6B; }
+      .card-jam-02 { --jam-color: #FF922B; }
+      .card-jam-03 { --jam-color: #FFD93D; }
+      .card-jam-04 { --jam-color: #6BCB77; }
+      .card-jam-05 { --jam-color: #4D96FF; }
+      .card-jam-06 { --jam-color: #9D4EDD; }
+      .card-jam-07 { --jam-color: #FF006E; }
+      .card-jam-08 { --jam-color: #FB5607; }
+      .card-jam-09 { --jam-color: #00B4D8; }
+      .card-jam-10 { --jam-color: #06FFA5; }
+      .card-jam-11 { --jam-color: #FF10F0; }
+
+      .card-jam-01 { background-color: rgba(255, 107, 107, 0.08); border-left-color: #FF6B6B; }
+      .card-jam-02 { background-color: rgba(255, 146, 43, 0.08); border-left-color: #FF922B; }
+      .card-jam-03 { background-color: rgba(255, 217, 61, 0.08); border-left-color: #FFD93D; }
+      .card-jam-04 { background-color: rgba(107, 203, 119, 0.08); border-left-color: #6BCB77; }
+      .card-jam-05 { background-color: rgba(77, 150, 255, 0.08); border-left-color: #4D96FF; }
+      .card-jam-06 { background-color: rgba(157, 78, 221, 0.08); border-left-color: #9D4EDD; }
+      .card-jam-07 { background-color: rgba(255, 0, 110, 0.08); border-left-color: #FF006E; }
+      .card-jam-08 { background-color: rgba(251, 86, 7, 0.08); border-left-color: #FB5607; }
+      .card-jam-09 { background-color: rgba(0, 180, 216, 0.08); border-left-color: #00B4D8; }
+      .card-jam-10 { background-color: rgba(6, 255, 165, 0.08); border-left-color: #06FFA5; }
+      .card-jam-11 { background-color: rgba(255, 16, 240, 0.08); border-left-color: #FF10F0; }
+
+      .card-jam-01::before { background-color: #FF6B6B; }
+      .card-jam-02::before { background-color: #FF922B; }
+      .card-jam-03::before { background-color: #FFD93D; }
+      .card-jam-04::before { background-color: #6BCB77; }
+      .card-jam-05::before { background-color: #4D96FF; }
+      .card-jam-06::before { background-color: #9D4EDD; }
+      .card-jam-07::before { background-color: #FF006E; }
+      .card-jam-08::before { background-color: #FB5607; }
+      .card-jam-09::before { background-color: #00B4D8; }
+      .card-jam-10::before { background-color: #06FFA5; }
+      .card-jam-11::before { background-color: #FF10F0; }
+
       .card-header {
         display: flex;
         justify-content: space-between;
@@ -359,18 +396,17 @@
         font-weight: 600;
         color: var(--text-main);
         margin-bottom: 0.25rem;
-        white-space: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        /* Ensure modern browsers wrap */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .card-guru {
         font-size: 0.875rem;
         color: var(--text-muted);
-        white-space: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .tag {
@@ -410,6 +446,9 @@
       .info-val {
         color: var(--text-main);
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .card-footer {
@@ -1221,7 +1260,9 @@
 
           data.forEach((item, index) => {
             const card = document.createElement("div");
-            card.className = "card";
+            const jamKey = (item.jam || "").slice(0, 2).trim();
+            const jamClass = jamKey ? `card-jam-${jamKey}` : "card-jam-default";
+            card.className = `card ${jamClass}`;
             // Stagger animation with a cap to prevent 5-second delays on the last items
             const delay = Math.min(index * 30, 1000);
             card.style.animationDelay = `${delay}ms`;
