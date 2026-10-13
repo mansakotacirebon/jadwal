@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -194,6 +194,52 @@
         background-color: var(--bg-dark);
         color: var(--text-main);
         border-color: var(--text-muted);
+      }
+
+      .preset-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-top: 0.25rem;
+      }
+
+      .preset-section h3 {
+        font-size: 0.9rem;
+        color: var(--text-main);
+      }
+
+      .preset-description,
+      .preset-status {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      .preset-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .preset-actions button {
+        flex: 1;
+        padding: 0.6rem 0.35rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        background: transparent;
+        color: var(--text-main);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.75rem;
+      }
+
+      .preset-actions button:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .preset-actions #delete-preset:hover {
+        border-color: var(--danger-color);
+        color: var(--danger-color);
       }
 
       .stats-card {
@@ -850,6 +896,22 @@
           </div>
 
           <button id="reset-filters" class="btn-reset">Reset Filter</button>
+          <section class="preset-section" aria-labelledby="preset-heading">
+            <h3 id="preset-heading">Preset default</h3>
+            <p class="preset-description">
+              Simpan guru dan/atau kelas sebagai filter otomatis. Hari mengikuti
+              tanggal saat ini.
+            </p>
+            <div class="preset-actions">
+              <button id="save-preset" type="button">Simpan preset</button>
+              <button id="delete-preset" type="button" hidden>
+                Hapus preset
+              </button>
+            </div>
+            <p id="preset-status" class="preset-status" role="status">
+              Belum ada preset.
+            </p>
+          </section>
         </div>
       </aside>
 
@@ -899,559 +961,6 @@
       </main>
     </div>
 
-    <!-- Data & Logic -->
-    <script>
-      function parseCsv(text) {
-        const normalizedText = text.replace(/^\uFEFF/, "");
-        const lines = normalizedText
-          .split(/\r?\n/)
-          .filter((line) => line.trim().length > 0);
-
-        if (lines.length < 2) {
-          return [];
-        }
-
-        const rows = lines.map((line) => {
-          const values = [];
-          let current = "";
-          let inQuotes = false;
-
-          for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-
-            if (char === '"') {
-              if (inQuotes && line[i + 1] === '"') {
-                current += '"';
-                i += 1;
-              } else {
-                inQuotes = !inQuotes;
-              }
-            } else if (char === "," && !inQuotes) {
-              values.push(current);
-              current = "";
-            } else {
-              current += char;
-            }
-          }
-
-          values.push(current);
-          return values;
-        });
-
-        const [header, ...records] = rows;
-        return records
-          .map((record) => {
-            const item = {};
-            header.forEach((key, index) => {
-              const cleanKey = key.trim();
-              item[cleanKey] = (record[index] ?? "").trim();
-            });
-
-            return {
-              hari: item.hari || "",
-              jam: item.jam || "",
-              kelas: item.kelas || "",
-              mapel: item.mapel || "",
-              guru: item.guru || "",
-            };
-          })
-          .filter(
-            (item) =>
-              item.hari && item.jam && item.kelas && item.mapel && item.guru,
-          );
-      }
-
-      async function loadJadwalData() {
-        try {
-          const response = await fetch("./datajadwal.csv", {
-            cache: "no-cache",
-          });
-
-          if (!response.ok) {
-            throw new Error("HTTP " + response.status);
-          }
-
-          const csvText = await response.text();
-          return parseCsv(csvText);
-        } catch (error) {
-          console.error("Gagal memuat data jadwal CSV:", error);
-          return [];
-        }
-      }
-
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("./sw.js").catch((error) => {
-            console.error("Service worker registration failed:", error);
-          });
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        // Theme Toggle
-        const themeToggleBtn = document.getElementById("toggle-theme");
-        const html = document.documentElement;
-        const THEME_KEY = "theme-preference";
-
-        // Clear app-specific session/cache storage when browser/tab closes
-        function clearAppStorage() {
-          try {
-            sessionStorage.removeItem(THEME_KEY);
-
-            if (window.caches && window.caches.keys) {
-              caches.keys().then((cacheNames) => {
-                cacheNames.forEach((cacheName) => caches.delete(cacheName));
-              });
-            }
-          } catch (error) {
-            console.warn("Tidak dapat membersihkan cache secara penuh:", error);
-          }
-        }
-
-        window.addEventListener("beforeunload", clearAppStorage);
-        window.addEventListener("unload", clearAppStorage);
-
-        // Initialize theme
-        function initTheme() {
-          const savedTheme = sessionStorage.getItem(THEME_KEY);
-          let currentTheme = savedTheme;
-
-          // If no saved theme, check system preference
-          if (!currentTheme) {
-            const prefersDark = window.matchMedia(
-              "(prefers-color-scheme: dark)",
-            ).matches;
-            currentTheme = prefersDark ? "dark" : "light";
-          }
-
-          applyTheme(currentTheme);
-        }
-
-        // Apply theme
-        function applyTheme(theme) {
-          if (theme === "light") {
-            html.setAttribute("data-theme", "light");
-            themeToggleBtn.textContent = "☀️";
-            themeToggleBtn.title = "Switch to Dark Mode";
-          } else {
-            html.removeAttribute("data-theme");
-            themeToggleBtn.textContent = "🌙";
-            themeToggleBtn.title = "Switch to Light Mode";
-          }
-          sessionStorage.setItem(THEME_KEY, theme);
-        }
-
-        // Toggle theme
-        function toggleTheme() {
-          const currentTheme = html.getAttribute("data-theme") || "dark";
-          const newTheme = currentTheme === "light" ? "dark" : "light";
-          applyTheme(newTheme);
-        }
-
-        // Theme toggle event listener
-        if (themeToggleBtn) {
-          themeToggleBtn.addEventListener("click", toggleTheme);
-        }
-
-        // Initialize theme on page load
-        initTheme();
-
-        // Mobile Sidebar Toggle
-        const sidebar = document.querySelector(".sidebar");
-        const toggleBtn = document.getElementById("toggle-sidebar");
-
-        // Helper function to close sidebar
-        function closeSidebar() {
-          sidebar.classList.remove("active");
-          toggleBtn.classList.remove("hidden");
-        }
-
-        // Toggle sidebar visibility
-        if (toggleBtn && sidebar) {
-          toggleBtn.addEventListener("click", () => {
-            sidebar.classList.toggle("active");
-            toggleBtn.classList.toggle("hidden");
-          });
-
-          // Close sidebar when clicking outside
-          document.addEventListener("click", (e) => {
-            // Check if sidebar is open
-            if (sidebar.classList.contains("active")) {
-              // If click is outside sidebar and not on toggle button
-              if (
-                !sidebar.contains(e.target) &&
-                !toggleBtn.contains(e.target)
-              ) {
-                closeSidebar();
-              }
-            }
-          });
-
-          // Close sidebar with ESC key
-          document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && sidebar.classList.contains("active")) {
-              closeSidebar();
-            }
-          });
-
-          // Close sidebar when window resizes to desktop size
-          window.addEventListener("resize", () => {
-            if (window.innerWidth > 768) {
-              closeSidebar();
-            }
-          });
-        }
-
-        const dataJadwal = await loadJadwalData();
-
-        if (!Array.isArray(dataJadwal) || dataJadwal.length === 0) {
-          console.error("Data jadwal tidak dapat dimuat dari datajadwal.csv.");
-          return;
-        }
-
-        // State
-        const state = {
-          data: dataJadwal,
-          filters: {
-            hari: "",
-            kelas: "",
-            mapel: "",
-            guru: "Muhamad Ihsan, S.Ud",
-            search: "",
-          },
-        };
-
-        // DOM Elements
-        const elements = {
-          grid: document.getElementById("schedule-grid"),
-          emptyState: document.getElementById("empty-state"),
-          totalCount: document.getElementById("total-count"),
-          filterBadgesBar: document.getElementById("filter-badges-bar"),
-          inputs: {
-            hari: document.getElementById("filter-hari"),
-            kelas: document.getElementById("filter-kelas"),
-            mapel: document.getElementById("filter-mapel"),
-            guru: document.getElementById("filter-guru"),
-            search: document.getElementById("search-input"),
-          },
-          counts: {
-            hari: document.getElementById("count-hari"),
-            kelas: document.getElementById("count-kelas"),
-            mapel: document.getElementById("count-mapel"),
-            guru: document.getElementById("count-guru"),
-          },
-          resetBtn: document.getElementById("reset-filters"),
-        };
-
-        // Initialize
-        function init() {
-          // Set hari filter to current day
-          const days = [
-            "Minggu",
-            "Senin",
-            "Selasa",
-            "Rabu",
-            "Kamis",
-            "Jumat",
-            "Sabtu",
-          ];
-          const currentDay = days[new Date().getDay()];
-          state.filters.hari = currentDay;
-          state.filters.guru = "Muhamad Ihsan, S.Ud";
-
-          updateDropdowns(); // Initial population
-          applyFilters(); // Apply initial filter for current day
-          setupEventListeners();
-        }
-
-        /**
-         * Get valid options for a specific key based on OTHER current filters.
-         * Use this to implement dependent dropdowns.
-         */
-        function getValidOptions(targetKey) {
-          // Filter the main data using all active filters EXCEPT the targetKey itself.
-          // This ensures that selecting 'Senin' doesn't hide 'Senin' from the Hari dropdown,
-          // but it DOES hide 'Classes' that don't have schedules on 'Senin'.
-          const filteredData = state.data.filter((item) => {
-            const matchesHari =
-              targetKey === "hari" ||
-              !state.filters.hari ||
-              item.hari === state.filters.hari;
-            const matchesKelas =
-              targetKey === "kelas" ||
-              !state.filters.kelas ||
-              item.kelas === state.filters.kelas;
-            const matchesMapel =
-              targetKey === "mapel" ||
-              !state.filters.mapel ||
-              item.mapel === state.filters.mapel;
-            const matchesGuru =
-              targetKey === "guru" ||
-              !state.filters.guru ||
-              item.guru === state.filters.guru;
-
-            // We do NOT use search text to filter dropdown options, only the grid.
-            return matchesHari && matchesKelas && matchesMapel && matchesGuru;
-          });
-
-          const uniqueValues = [
-            ...new Set(filteredData.map((item) => item[targetKey])),
-          ];
-
-          if (targetKey === "hari") {
-            return uniqueValues.sort((a, b) => b.localeCompare(a, "id"));
-          }
-
-          return uniqueValues.sort();
-        }
-
-        // Update all dropdowns options based on current state
-        function updateDropdowns() {
-          const keys = ["hari", "kelas", "mapel", "guru"];
-
-          // Default placeholder texts
-          const defaultLabels = {
-            hari: "Jumlah Hari",
-            kelas: "Jumlah Kelas",
-            mapel: "Jumlah Mapel",
-            guru: "Jumlah Guru",
-          };
-
-          keys.forEach((key) => {
-            const select = elements.inputs[key];
-            const validValues = getValidOptions(key);
-            const currentValue = state.filters[key];
-
-            // 1. Clear existing options
-            select.innerHTML = "";
-
-            // 2. Add Default Option
-            const defaultOption = document.createElement("option");
-            defaultOption.value = "";
-            defaultOption.textContent = defaultLabels[key];
-            select.appendChild(defaultOption);
-
-            // 3. Add Valid Options
-            validValues.forEach((val) => {
-              const option = document.createElement("option");
-              option.value = val;
-              option.textContent = val;
-              select.appendChild(option);
-            });
-
-            // 4. Restore Selection or Reset
-            // If the previously selected value is still valid in the new context, keep it.
-            if (currentValue && validValues.includes(currentValue)) {
-              select.value = currentValue;
-            } else if (currentValue) {
-              // If the selected value is no longer valid (e.g. that Teacher doesn't teach on the new Day),
-              // we must deselect it to reflect reality.
-              state.filters[key] = "";
-              select.value = "";
-              // Since we changed the state 'silently' here, we should technically re-filter the grid.
-              // applyFilters will be called by the event listener that triggered this update,
-              // but if we are in a chain reaction, we might need to ensure consistency.
-              // However, applyFilters uses state.filters, so updating state.filters[key] here is correct.
-            }
-          });
-
-          // Update count badges
-          updateCountBadges();
-        }
-
-        // Update count badges for each filter
-        function updateCountBadges() {
-          const keys = ["hari", "kelas", "mapel", "guru"];
-
-          keys.forEach((key) => {
-            const validValues = getValidOptions(key);
-            const count = validValues.length;
-            if (elements.counts[key]) {
-              elements.counts[key].textContent = count;
-            }
-          });
-        }
-
-        // Filter Logic for GRID
-        function applyFilters() {
-          const filtered = state.data.filter((item) => {
-            const matchesHari =
-              !state.filters.hari || item.hari === state.filters.hari;
-            const matchesKelas =
-              !state.filters.kelas || item.kelas === state.filters.kelas;
-            const matchesMapel =
-              !state.filters.mapel || item.mapel === state.filters.mapel;
-            const matchesGuru =
-              !state.filters.guru || item.guru === state.filters.guru;
-
-            const searchTerm = state.filters.search.toLowerCase();
-            const matchesSearch =
-              !searchTerm ||
-              item.mapel.toLowerCase().includes(searchTerm) ||
-              item.guru.toLowerCase().includes(searchTerm) ||
-              item.kelas.toLowerCase().includes(searchTerm);
-
-            return (
-              matchesHari &&
-              matchesKelas &&
-              matchesMapel &&
-              matchesGuru &&
-              matchesSearch
-            );
-          });
-
-          renderCards(filtered);
-          renderFilterBadges();
-        }
-
-        // Render active filter badges below the header
-        function renderFilterBadges() {
-          const bar = elements.filterBadgesBar;
-          // Clear all previous badges (keep the static label)
-          bar.innerHTML =
-            '<span class="filter-badge-label">Filter aktif:</span>';
-
-          const filterLabels = {
-            hari: " ",
-            kelas: " ",
-            mapel: " ",
-            guru: " ",
-            search: " ",
-          };
-
-          let count = 0;
-          Object.keys(state.filters).forEach((key) => {
-            const val = state.filters[key];
-            if (!val) return;
-            count++;
-
-            const badge = document.createElement("span");
-            badge.className = "filter-badge";
-            badge.title = `Hapus filter ${filterLabels[key]}`;
-            badge.innerHTML = `
-              <span class="badge-key">${filterLabels[key]}</span>
-              <span class="badge-val">${val}</span>
-              <span class="badge-close" aria-label="hapus">&times;</span>
-            `;
-
-            badge
-              .querySelector(".badge-close")
-              .addEventListener("click", () => {
-                state.filters[key] = "";
-                if (key === "search") {
-                  elements.inputs.search.value = "";
-                } else {
-                  elements.inputs[key].value = "";
-                }
-                updateDropdowns();
-                applyFilters();
-              });
-
-            bar.appendChild(badge);
-          });
-
-          // Toggle visibility
-          bar.classList.toggle("has-badges", count > 0);
-        }
-
-        // Render Cards
-        function renderCards(data) {
-          elements.grid.innerHTML = "";
-          elements.totalCount.textContent = data.length;
-
-          if (data.length === 0) {
-            elements.emptyState.classList.remove("hidden");
-            return;
-          }
-
-          elements.emptyState.classList.add("hidden");
-
-          // Limit rendering for performance if needed, but 1600 is okay for modern browsers.
-          // Adding a simple max cap for initial render could be good if it's too slow, but let's stick to full render for now.
-
-          data.forEach((item, index) => {
-            const card = document.createElement("div");
-            const jamKey = (item.jam || "").slice(0, 2).trim();
-            const jamClass = jamKey ? `card-jam-${jamKey}` : "card-jam-default";
-            card.className = `card ${jamClass}`;
-            // Stagger animation with a cap to prevent 5-second delays on the last items
-            const delay = Math.min(index * 30, 1000);
-            card.style.animationDelay = `${delay}ms`;
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <div>
-                        <h3 class="card-mapel">${item.mapel}</h3>
-                        <p class="card-guru">${item.guru}</p>
-                    </div>
-                    <span class="tag tag-kelas">${item.kelas}</span>
-                </div>
-                <div class="card-body">
-                    <div class="info-row">
-                        <span>📆</span>
-                        <span class="info-val">${item.hari}</span>
-                     <span>  ||</span>
-                        <span>⏰</span>
-                        <span class="info-val">${item.jam}</span>
-                    </div>
-                </div>
-            `;
-            elements.grid.appendChild(card);
-          });
-        }
-
-        // Event Listeners
-        function setupEventListeners() {
-          const handleFilterChange = (key) => (e) => {
-            state.filters[key] = e.target.value;
-            // 1. Update dependent dropdowns based on the new change
-            updateDropdowns();
-            // 2. Filter the grid
-            applyFilters();
-          };
-
-          elements.inputs.hari.addEventListener(
-            "change",
-            handleFilterChange("hari"),
-          );
-          elements.inputs.kelas.addEventListener(
-            "change",
-            handleFilterChange("kelas"),
-          );
-          elements.inputs.mapel.addEventListener(
-            "change",
-            handleFilterChange("mapel"),
-          );
-          elements.inputs.guru.addEventListener(
-            "change",
-            handleFilterChange("guru"),
-          );
-
-          elements.inputs.search.addEventListener("input", (e) => {
-            state.filters.search = e.target.value;
-            applyFilters();
-          });
-
-          elements.resetBtn.addEventListener("click", () => {
-            state.filters = {
-              hari: "",
-              kelas: "",
-              mapel: "",
-              guru: "",
-              search: state.filters.search, // Keep search text? User usually expects full reset.
-            };
-
-            // To be thorough, you might want to clear search too if it's a "Reset All" button.
-            state.filters.search = "";
-            elements.inputs.search.value = "";
-
-            updateDropdowns(); // Reset options to full lists
-            applyFilters();
-          });
-        }
-
-        init();
-      });
-    </script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>

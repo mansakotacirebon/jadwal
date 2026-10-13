@@ -1,10 +1,18 @@
-const CACHE_NAME = 'jadwal-pwa-v1';
+const CACHE_NAME = 'jadwal-pwa-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './datajadwal.csv',
   './logo.svg',
-  './manifest.json'
+  './manifest.json',
+  './js/main.js',
+  './js/application/scheduleService.js',
+  './js/data/presetRepository.js',
+  './js/data/scheduleRepository.js',
+  './js/domain/schedule.js',
+  './js/presentation/scheduleView.js',
+  './js/presentation/sidebar.js',
+  './js/presentation/theme.js'
 ];
 
 self.addEventListener('install', (event) => {
