@@ -102,6 +102,21 @@
         overflow-y: auto;
       }
 
+      .sidebar,
+      .filters,
+      select,
+      .grid-container {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .sidebar::-webkit-scrollbar,
+      .filters::-webkit-scrollbar,
+      select::-webkit-scrollbar,
+      .grid-container::-webkit-scrollbar {
+        display: none;
+      }
+
       .brand {
         display: flex;
         flex-direction: column;
