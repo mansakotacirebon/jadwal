@@ -844,11 +844,24 @@
           />
           <h1>MAN 1 Kota Cirebon</h1>
         </div>
-        <div class="stats-card">
-          <h3>Total Jadwal</h3>
-          <p id="total-count">0</p>
-        </div>
+
+
         <div class="filters">
+          <section class="preset-section" aria-labelledby="preset-heading">
+            <h3 id="preset-heading">Preset default</h3>
+            <p class="preset-description">
+              ⚡Simpan filter untuk akses cepat⚡
+            </p>
+            <div class="preset-actions">
+              <button id="save-preset" type="button">Simpan preset</button>
+              <button id="delete-preset" type="button" hidden>
+                Hapus preset
+              </button>
+            </div>
+            <p id="preset-status" class="preset-status" role="status">
+              Belum ada preset.
+            </p>
+          </section>
           <div class="filter-group">
             <label for="filter-hari"
               >Hari <span class="count-badge" id="count-hari">0</span></label
@@ -896,22 +909,10 @@
           </div>
 
           <button id="reset-filters" class="btn-reset">Reset Filter</button>
-          <section class="preset-section" aria-labelledby="preset-heading">
-            <h3 id="preset-heading">Preset default</h3>
-            <p class="preset-description">
-              Simpan guru dan/atau kelas sebagai filter otomatis. Hari mengikuti
-              tanggal saat ini.
-            </p>
-            <div class="preset-actions">
-              <button id="save-preset" type="button">Simpan preset</button>
-              <button id="delete-preset" type="button" hidden>
-                Hapus preset
-              </button>
-            </div>
-            <p id="preset-status" class="preset-status" role="status">
-              Belum ada preset.
-            </p>
-          </section>
+        </div>
+                <div class="stats-card">
+          <h3>Total Jadwal</h3>
+          <p id="total-count">0</p>
         </div>
       </aside>
 
